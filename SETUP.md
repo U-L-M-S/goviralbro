@@ -14,6 +14,83 @@ Detailed installation and configuration for Viral Command.
 | pip | Yes | Included with Python |
 | Git | Yes | `brew install git` (macOS) |
 
+Running with Docker? You only need Docker itself — skip to [Docker](#docker) below.
+
+---
+
+## Docker
+
+The image bundles Claude Code, Python 3.12, Node 22, yt-dlp, Instaloader, ffmpeg and every Python
+dependency, so nothing but Docker Engine 20.10+ with Compose v2 has to exist on your machine.
+
+### 1. Start the Stack
+
+```bash
+git clone https://github.com/charlesdove977/goviralbro.git
+cd goviralbro
+docker compose up -d
+```
+
+The first run builds the image (a few minutes), then starts the Recon Intelligence UI on
+[localhost:5001](http://localhost:5001). The container bootstrap also creates the `data/` tree,
+initializes empty data files, and copies `.env.example` to `.env` if you don't have one yet.
+
+### 2. Add Your API Keys
+
+Edit `.env` (same keys as a native install — see [Configure API Keys](#3-configure-api-keys)), then:
+
+```bash
+docker compose up -d --force-recreate
+```
+
+### 3. Open Claude Code
+
+```bash
+docker compose run --rm goviralbro
+```
+
+This drops you into Claude Code inside the container with all seven `/viral:*` commands and the
+bundled `last30days` skill already registered. Run `/viral:onboard` to create your agent brain.
+
+Use `docker compose run --rm goviralbro bash` if you want a shell instead.
+
+### Everyday Commands
+
+| Command | What It Does |
+|---------|-------------|
+| `docker compose up -d` | Build if needed, start the Recon UI |
+| `docker compose run --rm goviralbro` | Claude Code session with `/viral:*` loaded |
+| `docker compose run --rm goviralbro bash` | Shell in the container |
+| `docker compose logs -f recon` | Follow the Recon UI logs |
+| `docker compose down` | Stop everything |
+| `docker compose build --no-cache` | Rebuild from scratch |
+
+### How It Is Wired
+
+- **Your repo is mounted at `/app`.** `data/`, `logs/` and `.env` live on the host, so nothing is
+  lost when a container is removed, and edits to `.claude/commands/*.md` apply on the next run.
+- **`.env` is loaded into both services.** Any key you add is visible to the pipeline scripts.
+  The bundled `last30days` skill reads it too — `~/.config/last30days/.env` is symlinked to it.
+- **Claude Code's login lives in the `claude-home` volume**, so you authenticate once. Alternatively
+  set `ANTHROPIC_API_KEY` in `.env` — note that this also switches Claude Code to API billing.
+- **The container runs as the user that owns the repo**, detected at startup, so files written to
+  `data/` come out owned by you. Override with `PUID` / `PGID` if the detection is wrong:
+
+  ```bash
+  PUID=$(id -u) PGID=$(id -g) docker compose up -d
+  ```
+
+- **The Recon UI binds to `127.0.0.1` only.** Change the host port with `RECON_HOST_PORT` in `.env`.
+
+### Docker Notes
+
+- YouTube OAuth (`scripts/setup-yt-oauth.py`) opens a browser on the host — run it there, or paste
+  the URL it prints. The resulting token is written into the mounted repo either way.
+- X/Twitter search reads browser cookies, which a container doesn't have. The other discovery
+  sources (Reddit, YouTube, web) work normally; set `XAI_API_KEY` in `.env` to restore X.
+- Local Whisper (`openai-whisper`) is not preinstalled — it pulls in PyTorch. The OpenAI Whisper API
+  is used instead and needs only `OPENAI_API_KEY`.
+
 ---
 
 ## Installation
@@ -153,7 +230,9 @@ bash scripts/uninstall-crons.sh
 
 ## Windows Setup
 
-Windows users should use WSL (Windows Subsystem for Linux):
+The Docker setup works on Windows as-is — Docker Desktop handles the Linux side for you.
+
+For a native install, use WSL (Windows Subsystem for Linux):
 
 1. Install WSL: `wsl --install` in PowerShell (admin)
 2. Open WSL terminal
@@ -211,6 +290,32 @@ Instagram may rate-limit or block unauthenticated requests. If scraping fails:
 
 ```bash
 chmod +x scripts/*.sh
+```
+
+### Docker: container exits with "not writable"
+
+The startup script could not determine which user owns the mounted repo. Pass it explicitly:
+
+```bash
+PUID=$(id -u) PGID=$(id -g) docker compose up -d
+```
+
+### Docker: port 5001 already in use
+
+Another process holds the port. Pick a different one in `.env`:
+
+```bash
+RECON_HOST_PORT=5002
+```
+
+Then `docker compose up -d --force-recreate`.
+
+### Docker: changed .env but keys aren't picked up
+
+Environment variables are read when the container starts. Recreate it:
+
+```bash
+docker compose up -d --force-recreate
 ```
 
 ---
