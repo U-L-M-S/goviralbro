@@ -133,7 +133,20 @@ goviralbro/
 
 ## Requirements
 
-**With Docker** — Docker Engine 20.10+ with Compose v2, an OpenAI API key and a YouTube Data API v3 key. Nothing else.
+**With Docker** — just Docker, an OpenAI API key and a YouTube Data API v3 key. Nothing else.
+
+```bash
+# Mac
+brew install --cask docker
+
+# Windows (PowerShell)
+winget install -e --id Docker.DockerDesktop
+
+# Linux
+curl -fsSL https://get.docker.com | sh
+```
+
+On Mac/Windows, start Docker Desktop once after installing. No brew or winget? Get [Docker](https://docs.docker.com/get-docker/) directly.
 
 **Native install:**
 

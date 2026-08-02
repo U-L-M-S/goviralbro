@@ -27,7 +27,28 @@ Usage mirrors the native install: one command opens the same Claude Code session
 by running `claude` in the repo, and the Recon UI is available in your browser while you work.
 The commands below are identical on macOS, Linux and Windows (Docker Desktop — no WSL needed).
 
-### 1. Open Claude Code
+### 1. Install Docker
+
+Skip this step if `docker compose version` already works on your machine.
+
+```bash
+# macOS — Docker Desktop via Homebrew, then launch Docker.app once
+brew install --cask docker
+
+# Windows — Docker Desktop via winget (PowerShell), then launch it once
+winget install -e --id Docker.DockerDesktop
+
+# Linux — Docker's official install script (Engine + Compose)
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER   # log out and back in to run docker without sudo
+```
+
+These are Docker's officially maintained channels, so they stay current on their own. If none of
+them fits your machine, download from [docs.docker.com/get-docker](https://docs.docker.com/get-docker/) —
+it always points at the current installers. On Windows, Docker Desktop sets up its WSL 2 backend
+automatically (it may ask for a reboot).
+
+### 2. Open Claude Code
 
 ```bash
 git clone https://github.com/charlesdove977/goviralbro.git
@@ -47,7 +68,7 @@ don't have one yet.
 Use `docker compose run --rm goviralbro bash` if you want a shell instead, or add `--no-deps`
 to skip starting the Recon UI.
 
-### 2. Add Your API Keys
+### 3. Add Your API Keys
 
 Edit `.env` (same keys as a native install — see [Configure API Keys](#3-configure-api-keys)),
 then start your next session — containers pick up `.env` when they start:
