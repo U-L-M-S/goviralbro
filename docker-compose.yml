@@ -17,14 +17,19 @@ x-goviralbro: &goviralbro
   init: true
 
 services:
-  # Claude Code workspace with the /viral:* commands loaded.
+  # Claude Code workspace with the /viral:* commands loaded — the same session
+  # you'd get natively by running `claude` in the repo:
   #   docker compose run --rm goviralbro
+  # The Recon UI is started alongside it (depends_on), so the browser dashboard
+  # is live at http://localhost:5001 while you work. Skip it with --no-deps.
   # Not started by `docker compose up` — it is an interactive session.
   goviralbro:
     <<: *goviralbro
     profiles: ["cli"]
     stdin_open: true
     tty: true
+    depends_on:
+      - recon
     command: ["claude"]
 
   # Recon Intelligence UI — http://localhost:5001

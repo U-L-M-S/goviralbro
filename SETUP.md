@@ -23,43 +23,46 @@ Running with Docker? You only need Docker itself — skip to [Docker](#docker) b
 The image bundles Claude Code, Python 3.12, Node 22, yt-dlp, Instaloader, ffmpeg and every Python
 dependency, so nothing but Docker Engine 20.10+ with Compose v2 has to exist on your machine.
 
-### 1. Start the Stack
+Usage mirrors the native install: one command opens the same Claude Code session you would get
+by running `claude` in the repo, and the Recon UI is available in your browser while you work.
+The commands below are identical on macOS, Linux and Windows (Docker Desktop — no WSL needed).
+
+### 1. Open Claude Code
 
 ```bash
 git clone https://github.com/charlesdove977/goviralbro.git
 cd goviralbro
-docker compose up -d
-```
-
-The first run builds the image (a few minutes), then starts the Recon Intelligence UI on
-[localhost:5001](http://localhost:5001). The container bootstrap also creates the `data/` tree,
-initializes empty data files, and copies `.env.example` to `.env` if you don't have one yet.
-
-### 2. Add Your API Keys
-
-Edit `.env` (same keys as a native install — see [Configure API Keys](#3-configure-api-keys)), then:
-
-```bash
-docker compose up -d --force-recreate
-```
-
-### 3. Open Claude Code
-
-```bash
 docker compose run --rm goviralbro
 ```
 
-This drops you into Claude Code inside the container with all seven `/viral:*` commands and the
-bundled `last30days` skill already registered. Run `/viral:onboard` to create your agent brain.
+The first run builds the image (a few minutes), then drops you into Claude Code inside the
+container with all seven `/viral:*` commands and the bundled `last30days` skill already
+registered. Run `/viral:onboard` to create your agent brain.
 
-Use `docker compose run --rm goviralbro bash` if you want a shell instead.
+The Recon Intelligence UI is started alongside the session — open
+[localhost:5001](http://localhost:5001) in your browser. The container bootstrap also creates
+the `data/` tree, initializes empty data files, and copies `.env.example` to `.env` if you
+don't have one yet.
+
+Use `docker compose run --rm goviralbro bash` if you want a shell instead, or add `--no-deps`
+to skip starting the Recon UI.
+
+### 2. Add Your API Keys
+
+Edit `.env` (same keys as a native install — see [Configure API Keys](#3-configure-api-keys)),
+then start your next session — containers pick up `.env` when they start:
+
+```bash
+docker compose up -d --force-recreate    # restart the Recon UI with the new keys
+```
 
 ### Everyday Commands
 
 | Command | What It Does |
 |---------|-------------|
-| `docker compose up -d` | Build if needed, start the Recon UI |
-| `docker compose run --rm goviralbro` | Claude Code session with `/viral:*` loaded |
+| `docker compose run --rm goviralbro` | Claude Code session with `/viral:*` loaded + Recon UI |
+| `./scripts/run-recon-ui.sh` | Recon UI only — same script as the native install |
+| `docker compose up -d` | Recon UI only, kept running in the background |
 | `docker compose run --rm goviralbro bash` | Shell in the container |
 | `docker compose logs -f recon` | Follow the Recon UI logs |
 | `docker compose down` | Stop everything |

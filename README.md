@@ -20,14 +20,13 @@
 <br/>
 
 ```bash
-# Docker — nothing to install but Docker itself
-git clone https://github.com/charlesdove977/goviralbro.git && cd goviralbro && docker compose up -d
-
-# Native
 git clone https://github.com/charlesdove977/goviralbro.git && cd goviralbro && bash scripts/init-viral-command.sh
+
+# or with Docker — nothing to install but Docker itself
+git clone https://github.com/charlesdove977/goviralbro.git && cd goviralbro && docker compose run --rm goviralbro
 ```
 
-<p align="center">Works on Mac, Windows (WSL), and Linux.</p>
+<p align="center">Works on Mac, Linux, and Windows (WSL or Docker).</p>
 
 <br/>
 
@@ -74,21 +73,20 @@ git clone https://github.com/charlesdove977/goviralbro.git && cd goviralbro && b
 
 ## Docker
 
-The image ships Claude Code, Python 3.12, Node 22, yt-dlp, Instaloader and ffmpeg — no local toolchain required.
+Everything preinstalled — Claude Code, Python, Node, yt-dlp, Instaloader, ffmpeg. Same usage as the native install, same commands on Mac, Linux and Windows.
 
 ```bash
-docker compose up -d                     # build + start the Recon Intelligence UI
-docker compose run --rm goviralbro       # open Claude Code with /viral:* loaded
+docker compose run --rm goviralbro       # open Claude Code — /viral:* ready
 docker compose down                      # stop everything
 ```
 
-- **Recon UI** — [localhost:5001](http://localhost:5001): competitor dashboard, skeleton ripper, settings
-- **API keys** — edit `.env` (created for you on first start), then `docker compose up -d --force-recreate`
-- **Your data** — `data/`, `logs/` and `.env` stay on the host; the repo is mounted into the container
-- **Claude login** — persisted in a named volume, so you only authenticate once
-- **File ownership** — the container runs as the user who owns the repo; override with `PUID`/`PGID`
+The Recon UI starts with your session — open [localhost:5001](http://localhost:5001) in your browser.
 
-See [SETUP.md](SETUP.md#docker) for the full Docker guide.
+- **API keys** — edit `.env` (created on first start), then restart
+- **Your data** — `data/`, `logs/` and `.env` stay on your machine
+- **Claude login** — saved in a volume, you authenticate once
+
+See [SETUP.md](SETUP.md#docker) for the full guide.
 
 ---
 
@@ -102,7 +100,7 @@ See [SETUP.md](SETUP.md#docker) for the full Docker guide.
 - **Discovery**: Competitor scraping (YouTube + Instagram) + keyword search (YouTube, Reddit, GitHub) — uses your brain's pillar keywords
 - **Recon Intelligence UI** — browser dashboard for scraping competitors and ripping hook skeletons
 - **Monetization coaching** baked into every output
-- **One-command Docker setup** — `docker compose up` brings the whole toolchain
+- **One-command Docker setup** — `docker compose run --rm goviralbro` brings the whole toolchain
 
 ---
 

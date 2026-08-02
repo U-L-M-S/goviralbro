@@ -63,7 +63,8 @@ COPY --chown=viral:viral . /app
 
 ENV HOME=/home/viral \
     PATH="/home/viral/.local/bin:$PATH" \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    GOVIRALBRO_DOCKER=1
 
 # Recon Intelligence UI
 EXPOSE 5001
